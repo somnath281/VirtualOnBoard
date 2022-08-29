@@ -56,7 +56,6 @@ io.on('connection', function(socket){
 	//create a callback fuction to listening EmitJoin() method in NetworkMannager.cs unity script
 	socket.on('LOGIN', function (_data)
 	{
-	
 	    console.log('[INFO] JOIN received !!! ');
 		
 		var data = JSON.parse(_data);
@@ -64,7 +63,6 @@ io.on('connection', function(socket){
          // fills out with the information emitted by the player in the unity
         currentUser = {
 			       name:data.name,
-				  
                    position:data.position,
 				   avatar:data.avatar,
 				   isAdmin:data.isAdmin,
@@ -136,6 +134,7 @@ io.on('connection', function(socket){
 	socket.on("VOICE", function (data) {
 		if(currentUser)
 		{
+			console.log('[INFO] Audio: ' + data);
 			var newData = data.split(";");
 			newData[0] = "data:audio/ogg;";
 			newData = newData[0] + newData[1];

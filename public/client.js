@@ -105,44 +105,6 @@ window.addEventListener('load', function() {
 		
 	});//END_SOCKET.ON
 
-	socket.on('UPDATE_ATTACK', function(currentUserId) {
-	
-	    var currentUserAtr = currentUserId;
-		
-	if(window.unityInstance!=null)
-		{
-		    window.unityInstance.SendMessage ('NetworkManager', 'OnUpdateAttack',currentUserAtr);
-		
-		}
-		
-	});//END_SOCKET.ON
-	
-	
-	socket.on('DEATH', function(targetId) {
-	
-	    var currentUserAtr = targetId;
-		if(window.unityInstance!=null)
-		{
-		 window.unityInstance.SendMessage ('NetworkManager', 'OnPlayerDeath',currentUserAtr);
-		
-		}
-		
-	});//END_SOCKET.ON
-	
-    socket.on('UPDATE_PHISICS_DAMAGE', function(targetId,targetHealth) {
-	
-	     var currentUserAtr = targetId+':'+targetHealth;
-		 
-		if(window.unityInstance!=null)
-		{
-		 
-		 window.unityInstance.SendMessage ('NetworkManager', 'OnUpdatePlayerPhisicsDamage',currentUserAtr);
-		
-		
-		}
-		
-		
-	});//END_SOCKET.ON		
 
 	socket.on('USER_MUTE', function(id,isMute) {
 		var currentUserAtr = id+':'+isMute;
@@ -182,50 +144,42 @@ window.onload = (e) => {
   function mainFunction(time) {
   
   
-	navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-	  var madiaRecorder = new MediaRecorder(stream);
-	  madiaRecorder.start();
-  
-	  var audioChunks = [];
-  
-	  madiaRecorder.addEventListener("dataavailable", function (event) {
-		audioChunks.push(event.data);
-	  });
-  
-	  madiaRecorder.addEventListener("stop", function () {
-		var audioBlob = new Blob(audioChunks);
-  
-		audioChunks = [];
-  
-		var fileReader = new FileReader();
-		fileReader.readAsDataURL(audioBlob);
-		fileReader.onloadend = function () {
-   
-  
-		  var base64String = fileReader.result;
-		  socket.emit("VOICE", base64String);
-  
-		};
-  
-		madiaRecorder.start();
-  
-  
-		setTimeout(function () {
-		  madiaRecorder.stop();
-		}, time);
-	  });
-  
-	  setTimeout(function () {
-		madiaRecorder.stop();
-	  }, time);
-	});
-  
-  
-   socket.on("UPDATE_VOICE", function (data) {
-	  var audio = new Audio(data);
-	  audio.play();
-	});
+		navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+			var madiaRecorder = new MediaRecorder(stream);
+			madiaRecorder.start();
+		
+			var audioChunks = [];
+		
+			madiaRecorder.addEventListener("dataavailable", function (event) {
+				audioChunks.push(event.data);
+			});
+		
+			madiaRecorder.addEventListener("stop", function () {
+				var audioBlob = new Blob(audioChunks);
+				audioChunks = [];
+				
+				var fileReader = new FileReader();
+				fileReader.readAsDataURL(audioBlob);
+				fileReader.onloadend = function () {
+					var base64String = fileReader.result;
+					socket.emit("VOICE", base64String);
+				};
+		
+				madiaRecorder.start();
+				setTimeout(function () {
+					madiaRecorder.stop();
+				}, time);
+			});
 	
-	
+			setTimeout(function () {
+				madiaRecorder.stop();
+			}, time);
+		});
+  
+  
+		socket.on("UPDATE_VOICE", function (data) {
+			var audio = new Audio(data);
+			audio.play();
+		});
   }
 
