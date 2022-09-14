@@ -70,6 +70,19 @@ window.addEventListener('load', function() {
 		}
 		
 	});//END_SOCKET.ON
+
+	socket.on('SEND_PRIVATE_MESSAGE', function(message) {
+	
+	    var currentUserAtr = message;
+		
+		if(window.unityInstance!=null)
+		{
+	     // sends the package currentUserAtr to the method OnSpawnPlayer in the NetworkManager class on Unity
+		  window.unityInstance.SendMessage ('NetworkManager', 'OnPrivateMessageReceived', currentUserAtr);
+		
+		}
+		
+	});//END_SOCKET.ON
 	
 	socket.on('RESPAWN_PLAYER', function(id,name,position,avatar,isAdmin) {
 	    var currentUserAtr = id+':'+name+':'+position+':'+avatar+':'+isAdmin;

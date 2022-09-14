@@ -108,11 +108,6 @@ io.on('connection', function(socket){
 	});//END_SOCKET_ON
 	
 	
-	
-
-	
-		
-	//create a callback fuction to listening EmitMoveAndRotate() method in NetworkMannager.cs unity script
 	socket.on('MOVE_AND_ROTATE', function (_data)
 	{
 	  var data = JSON.parse(_data);	
@@ -130,11 +125,27 @@ io.on('connection', function(socket){
       
        }
 	});//END_SOCKET_ON
+
+	
+		
+	//create a callback fuction to listening PrivateMessage() method in NetworkMannager.cs unity script
+	socket.on('PRIVATE_MESSAGE', function (_data)
+	{
+	  var data = JSON.parse(_data);	
+	  console.log('[INFO] Private Message: ' + data.to + " --- "+data.message);
+	  clients.forEach( function(i) {
+			if(i.id==data.to)
+			{ 
+				//send to the client.js script
+				socket.to(data.to).emit('SEND_PRIVATE_MESSAGE',data.message);
+				
+			}//END_IF
+		});//end_forEach
+	});//END_SOCKET_ON
 	
 	socket.on("VOICE", function (data) {
 		if(currentUser)
 		{
-			console.log('[INFO] Audio: ' + data);
 			var newData = data.split(";");
 			newData[0] = "data:audio/ogg;";
 			newData = newData[0] + newData[1];
